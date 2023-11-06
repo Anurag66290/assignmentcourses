@@ -1,0 +1,13 @@
+.lastTwo-btn {
+  float: left;
+}
+label {
+  float: left;
+}
+.add_remove {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+

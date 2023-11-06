@@ -1,0 +1,33 @@
+.customClass{
+    position: absolute;
+    top: 41px;
+    right: 10px;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.loginsied_bg{
+    background-color: #94acd7;
+    min-height: 100vh;
+}
+
+.btn-white{
+    background-color: white;
+    color: #4350e4;
+}
+
+.logrside_bgimg{
+    background: url('../assets/img/unsplash/login-bg.jpg') no-repeat center / cover;
+    position: relative;
+    min-height: 100vh;
+}
+
+
+@media (max-width:767.98px) {
+    .logrside_bgimg{
+        min-height: 25vh;
+    }
+    .loginsied_bg{
+        min-height: 75vh;
+    }
+}
