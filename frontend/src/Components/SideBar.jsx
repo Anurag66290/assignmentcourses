@@ -26,6 +26,8 @@ function Sidebar() {
     sidebarHideShow();
   }, []);
 
+  
+
   return (
     <div>
       <div className="main-sidebar sidebar-style-2">

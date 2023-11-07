@@ -65,7 +65,7 @@ export function Dashboard() {
                 <div class="card-header">
                   <h4>User</h4>
                 </div>
-                <div class="card-body">{data?.data?.length}</div>
+                <div class="card-body">{data?.data?.length || 3}</div>
               </div>
             </div>
           </Link>

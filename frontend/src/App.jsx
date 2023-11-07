@@ -19,7 +19,8 @@ import CourseTable from "./Components/screens/Course/CourseTable";
 import TestTable from "./Components/screens/Test/TesrTable";
 import CourseReport from "./Components/screens/Report/CourseReport";
 import TestReport from "./Components/screens/Report/TestReport";
-import Signup from "./Components/signup";
+import Signup from "./Components/Signup";
+
 
 
 function App() {

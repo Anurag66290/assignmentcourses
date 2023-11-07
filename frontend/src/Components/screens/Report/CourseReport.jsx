@@ -42,6 +42,8 @@ function CourseReport() {
       })
       .catch((err) => {
         console.log(err.message);
+        toast.error("User not eligible to access data", toastOptions);
+
       });
   };
   useEffect(() => {
@@ -207,7 +209,7 @@ function CourseReport() {
   return (
     <div>
       {" "}
-      {!finalArray || !dataArray  ? (
+      {!finalArray  ? (
         <Loader />
       ) : (
         <section class="section">

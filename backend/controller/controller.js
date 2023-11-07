@@ -50,9 +50,13 @@ import Testreport from "../model/testreport.js";
   */
   export const get_user = async (req, res) => {
     try {
+        if(req.user.role === "Manager-1"  || req.user.role === "Admin"){
         let data = await user.find()
         return res.status(200).json({ message: ' successfully', data: data });
-  
+        }
+        else{
+            return  res.status(400).send('you are not elligible to access this');
+            }
     } catch (error) {
             console.log(error);
             return res.status(500).send('Error occur ');
@@ -66,7 +70,7 @@ import Testreport from "../model/testreport.js";
   */
   export const role_update = async (req, res) => {
 try {
-    if(req.user.role === "Manager-1"  && req.user.role === "Admin"){
+    if(req.user.role === "Manager-1"  || req.user.role === "Admin"){
         let data = await user.findByIdAndUpdate({_id:req.body._id},{
             rolr:req.body.role
         })
@@ -426,7 +430,7 @@ try {
 export const getreport_test = async (req, res) => {
     console.log(req.body)
 try {
-    if(req.user.role === "Manager-2" && req.user.role === "Admin"){   
+    if(req.user.role === "Manager-2" || req.user.role === "Admin"){   
         let result = await Testreport.find()
     // console.log(result)
     return   res.status(200).json({ message: 'report get successfully', data: result })

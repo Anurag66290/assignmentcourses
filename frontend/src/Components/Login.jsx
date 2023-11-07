@@ -34,7 +34,7 @@ const Login = () => {
       .post("user/login", data)
       .then((res) => {
         console.log(res.data.data)
-        if (res.data?.data.role == "Admin") {
+        if (res.data) {
           navigate("/dashboard");
           localStorage.setItem("adminInfo", JSON.stringify(res.data?.data));
 
@@ -156,10 +156,10 @@ const Login = () => {
                   Login
                 </button>
 
-                {/* <Link to={"/Signup"} className="nav-link "  class="btn btn-white btn-lg btn-icon icon-right">
+                <Link to={"/Signup"} className="nav-link "  class="btn btn-white btn-lg btn-icon icon-right">
               
                 <span>Signup</span>
-              </Link> */}
+              </Link>
               </div>
 
               {/* <div class="mt-5 text-center">

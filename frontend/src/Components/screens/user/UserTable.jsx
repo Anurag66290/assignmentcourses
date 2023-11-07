@@ -19,11 +19,7 @@ function UserTable() {
   };
 
   const navigate = useNavigate();
-  // const dispatch = useDispatch();
-
   const [usersData, setUsersData] = useState([]);
-  const [toggleData, setToggleData] = useState();
-
   const adminInfo = JSON.parse(localStorage.getItem("adminInfo"));
 
   let getdata = () => {
@@ -35,13 +31,26 @@ function UserTable() {
         },
       })
       .then((res) => {
+        console.log(res, "asd");
+
+        if (res.status === 404 || res.status === 400 || res.status === "") {
+          throw new Error("User not eligible to access data");
+        }
+
         if (res.data) {
-          console.log(res.data.data)
-          setUsersData(res.data.data );
+          if (
+            adminInfo?.role === "Manager-1" ||
+            adminInfo?.role === "Admin"
+          ) {
+            setUsersData(res.data.data);
+          } else {
+            throw new Error("User not eligible to access data");
+          }
         }
       })
       .catch((err) => {
-        console.log(err.message);
+        console.error(err.message,"asasas");
+        toast.error("User not eligible to access data", toastOptions);
       });
   };
 
@@ -50,9 +59,8 @@ function UserTable() {
   }, []);
 
   const userdelete = (id) => {
-    // console.log(id,"-=-=-==-=-")
     http
-      .put(`/user/deleteUser/${id}`, {
+      .put(`/user/deleteUser/${id}`, null, {
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
@@ -61,51 +69,53 @@ function UserTable() {
       })
       .then((res) => {
         if (res.data.code === 200) {
-          // setImgData('');
           getdata();
           navigate("/usertable");
           toast.success("User deleted Successfully", toastOptions);
         }
       })
       .catch((err) => {
-        console.log(err, "======================err");
-        toast.error(err.response.data.message, toastOptions);
+        console.error(err);
+        toast.error(err.response?.data?.message || "Error deleting user", toastOptions);
       });
   };
 
   function changeStatus(id) {
-    var status = parseInt(document.getElementById(id).value)
-    http.post(`/user/updatestatus`, {
-        id,
-        status
-    }, {
-        headers: {
-            'Content-Type': "multipart/form-data",
-            Authorization: `Bearer ${
-                adminInfo ?. token
-            }`
+    var status = parseInt(document.getElementById(id).value);
+    http
+      .post(
+        `/user/updatestatus`,
+        {
+          id,
+          status,
+        },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${adminInfo?.token}`,
+          },
         }
-    }).then((res) => {
+      )
+      .then((res) => {
         if (res.data) {
-
-            navigate("/usertable");
-            getdata()
-            Swal.fire({
-              position: "center",
-              icon: "success",
-              title: "Updated Successfully",
-              showConfirmButton: false,
-              timer: 1000,
-            }).then(
-              () => {
-                // Reload the dashboard after the SweetAlert message is closed
-                window.location.reload();
-              }
-            );
+          navigate("/usertable");
+          getdata();
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Updated Successfully",
+            showConfirmButton: false,
+            timer: 1000,
+          }).then(() => {
+            window.location.reload();
+          });
         }
-    })
-
-}
+      })
+      .catch((err) => {
+        console.error(err);
+        toast.error("Error updating user status", toastOptions);
+      });
+  }
 
   const handleChange = (e, id) => {
     const user = { isActive: e.target.checked };
@@ -135,7 +145,7 @@ function UserTable() {
         }
       })
       .catch((er) =>
-        console.log(
+        console.error(
           er.response && er.response.data.message
             ? er.response.data.message
             : er.message
@@ -165,24 +175,43 @@ function UserTable() {
     "S.No.",
     "Name",
     "Email",
-    // "Phone Number",
-    // "Image",
     "Role",
     "Action",
   ];
+
   let finalArray = [];
 
   for (let [index, data] of usersData && usersData?.entries()) {
-    // console.log(index, data, '=3=3=33333333333333sssss');
+    const btn_status = (
+      <select
+        style={{
+          borderRadius: "20px",
+          margin: "2px",
+          padding: "5px",
+          textAlign: "center",
+        }}
+        name="role"
+        value={data?.role}
+        id={data._id}
+        className="btn btn-outline-secondry dropdown-toggle"
+        onChange={(event) => changeStatus(data._id)}
+      >
+        <option className="badge badge-success" value="1">
+          <label>{data?.role}</label>
+        </option>
+        <option className="badge badge-success" value="1">
+          <label>Manager-1</label>
+        </option>
+        <option className="badge badge-danger" value="2">
+          <label>Manger-2</label>
+        </option>
+      </select>
+    );
 
     const btn = (
       <>
-      
-        <Link
-          to={`/UserView/${data._id}`}
-          className="view-btn btn btn-info p-2"
-        >
-          <i class="fas fa-eye"></i>
+        <Link to={`/UserView/${data._id}`} className="view-btn btn btn-info p-2">
+          <i className="fas fa-eye"></i>
         </Link>
 
         <Link
@@ -192,73 +221,17 @@ function UserTable() {
             alert(data._id);
           }}
         >
-          <i class="fas fa-trash"></i>
+          <i className="fas fa-trash"></i>
         </Link>
       </>
     );
-
-    
-
-    let image = (
-      <img
-        src={
-          data?.image
-            ? `${import.meta.env.VITE_BASE_URL}/images/${data?.image}`
-            : `${avatar}`
-        }
-        style={{
-          height: "100px",
-          width: "100px",
-        }}
-      />
-    );
-
-    const btn_status = (
-      <>
-          <select style={
-                  {
-                      borderRadius: "20px",
-                      margin: "2px",
-                      padding: "5px",
-                      textAlign: "center"
-                  }
-              }
-              name="role"
-              value={
-                  data ?. role
-              }
-              id={data._id}
-              className="btn btn-outline-secondry dropdown-toggle"
-              onChange={
-                  event => changeStatus(data._id)
-          }>
-             
-             <option className="badge badge-success" value="1">
-                  <label>{data?.role}</label>
-              </option>
-              <option className="badge badge-success" value="1">
-                  <label>Manager-1</label>
-              </option>
-
-              <option className="badge badge-danger" value="2">
-                  <label>Manger-2</label>
-              </option>
-          </select>
-
-      </>
-  )
 
     var dataArray = [];
 
     dataArray.push(index + 1);
     dataArray.push(data.name);
     dataArray.push(data.email);
-    // dataArray.push(`+${data.countryCode}` + ` ${data.phoneNumber}`);
-
-    // dataArray.push(image);
-
     dataArray.push(btn_status);
-
     dataArray.push(btn);
 
     finalArray.push(dataArray);
@@ -269,32 +242,20 @@ function UserTable() {
     filterType: "checkbox",
     selectableRows: "none",
     filter: "false",
-
     viewColumns: false,
   };
-  
-  console.log("finalArray:", finalArray);
-  console.log("dataArray:", dataArray);
+
   return (
     <div>
-      {" "}
-      {!finalArray || !dataArray ? (
-
+      {!finalArray ? (
         <Loader />
       ) : (
-        <section class="section">
-          <div class="section-header">
+        <section className="section">
+          <div className="section-header">
             <h1>User Listing</h1>
           </div>
           <div>
-            {/* <div>
-              <Link to={`/UserAdd`}>
-                <Button className="btn btn-primary mb-3" >Add User</Button>
-              </Link>
-            </div> */}
-
             <MUIDataTable
-              // title={'Employee List'}
               data={data}
               columns={columns}
               options={options}

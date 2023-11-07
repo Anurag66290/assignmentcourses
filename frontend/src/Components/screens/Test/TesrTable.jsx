@@ -42,6 +42,7 @@ function TestTable() {
       })
       .catch((err) => {
         console.log(err.message);
+        toast.error("User not eligible to access data", toastOptions);
       });
   };
   useEffect(() => {
